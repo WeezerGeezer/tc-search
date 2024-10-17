@@ -1,0 +1,745 @@
+@font-face {
+    font-family: 'Jokerman';
+    src: url('fonts/Jokerman.otf') format('opentype');
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Futura:wght@400&display=swap');
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    padding-top: 0; /* Remove the default padding-top */
+}
+
+body:not(.search-page) {
+    padding-top: 70px; /* Add padding-top for pages other than the main search page */
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin-top: 15vh;
+    margin-bottom: 20px;
+}
+
+.logo {
+    font-family: 'Jokerman', cursive;
+    font-size: 5rem;
+    margin-bottom: 1px; /* Changed from 20px to 1px */
+    text-align: center;
+    line-height: 1.2;
+    /* Remove the margin-bottom */
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+select, input[type="submit"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+select {
+    margin-right: 10px;
+}
+
+/* Styles for search results */
+.episode {
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+    max-width: 600px;
+    width: 100%;
+}
+
+.episode-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.episode-header.active {
+    font-weight: bold;
+}
+
+.episode-title {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.hit-count {
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.toggle-button {
+    width: 20px;
+    text-align: center;
+}
+
+.episode-content {
+    display: none;
+    margin-left: 20px;
+}
+
+.timestamp {
+    font-style: italic;
+}
+
+.excerpt {
+    margin-left: 20px;
+}
+
+/* Add this to your existing styles */
+.excerpt b {
+    font-weight: bold;
+    background-color: yellow;  /* Optional: adds a highlight effect */
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a {
+    padding: 5px 10px;
+    margin: 0 5px;
+    text-decoration: none;
+    color: #4285F4;
+    border: 1px solid #4285F4;
+    border-radius: 4px;
+}
+
+.pagination a:hover {
+    background-color: #4285F4;
+    color: white;
+}
+
+/* Keep the existing styles for navbar, dropdown, etc. */
+
+.search-box {
+    display: flex;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
+.search-box input[type="text"] {
+    flex-grow: 1;
+    border: 1px solid #dfe1e5;
+    border-radius: 24px 0 0 24px;
+    padding: 10px 15px;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-button {
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    border-radius: 0 24px 24px 0;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-button:hover {
+    background-color: #3367D6;
+}
+
+.search-options {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-options select {
+    padding: 5px 10px;
+    border: 1px solid #dfe1e5;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    font-size: 14px;
+}
+
+.results-container {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 20px;
+}
+
+/* Styles for search results page */
+.results-page {
+    display: block;
+    padding-top: 100px;
+}
+
+.search-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 900;
+    transition: top 0.3s ease-in-out;
+}
+
+.logo-small {
+    font-family: 'Jokerman', cursive;
+    font-size: 2.2rem; /* Increased from 1.8rem */
+    text-decoration: none;
+    margin-right: 15px; /* Increased from 10px */
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent logo from shrinking */
+}
+
+.search-bar form {
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    flex-grow: 1;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    max-width: calc(100% - 40px); /* Adjust based on the width of the settings button */
+}
+
+.search-input-wrapper input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #dfe1e5;
+    border-radius: 24px;
+    outline: none;
+    min-width: 100px;
+}
+
+.advanced-options-toggle {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 10px;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 600px) {
+    .search-bar {
+        padding: 5px;
+    }
+
+    .logo-small {
+        font-size: 1.8rem; /* Slightly reduced for very small screens */
+        margin-right: 10px;
+    }
+
+    .search-input-wrapper {
+        max-width: calc(100% - 35px); /* Adjust based on the width of the settings button */
+    }
+
+    .search-input-wrapper input[type="text"] {
+        font-size: 14px; /* Slightly smaller font for very small screens */
+    }
+
+    .advanced-options-toggle {
+        padding: 5px;
+        font-size: 18px;
+    }
+}
+
+/* Media query for larger screens */
+@media screen and (min-width: 601px) {
+    .search-input-wrapper .search-button {
+        display: block; /* Show the search button on larger screens */
+        border-radius: 0 24px 24px 0;
+        padding: 10px 15px;
+        margin-left: -1px; /* Overlap with input border */
+    }
+
+    .search-input-wrapper input[type="text"] {
+        border-radius: 24px 0 0 24px;
+    }
+}
+
+.search-results {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.result-item {
+    margin-bottom: 20px;
+}
+
+.result-item h3 {
+    margin-bottom: 5px;
+}
+
+.result-item h3 a {
+    color: #1a0dab;
+    text-decoration: none;
+}
+
+.result-item h3 a:hover {
+    text-decoration: underline;
+}
+
+.result-url {
+    color: #006621;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.result-snippet {
+    color: #545454;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.result-meta {
+    color: #006621;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* ... (rest of the styles remain the same) ... */
+
+/* Updated styles for the search bar and navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.navbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-small {
+    font-family: 'Jokerman', cursive;
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: #000;
+}
+
+.search-form {
+    flex-grow: 1;
+    margin: 0 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.search-input-wrapper {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-input-wrapper input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #dfe1e5;
+    border-radius: 24px 0 0 24px;
+    outline: none;
+}
+
+.search-input-wrapper .search-button {
+    border-radius: 0 24px 24px 0;
+}
+
+.menu-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.show {
+    display: block;
+}
+
+.advanced-options {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+/* Add this to your existing styles */
+.fuzzy-search-toggle {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.fuzzy-search-toggle input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.transcript-entry button {
+    margin-left: 10px;
+    padding: 2px 5px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#flagForm {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.flagged-segment {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+/* Add these styles to your existing CSS file */
+
+.hit-item {
+    margin-bottom: 10px;
+}
+
+.timestamp-link {
+    color: #1a0dab;
+    text-decoration: none;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.timestamp-link:hover {
+    text-decoration: underline;
+}
+
+.transcript-entry.highlight {
+    background-color: #ffffd0;
+    transition: background-color 0.5s ease;
+}
+
+.collapse-button {
+    cursor: pointer;
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+/* Add this to your existing styles */
+.navbar-content:has(.search-form) .logo-small {
+    flex-grow: 0;
+}
+
+.navbar-content:not(:has(.search-form)) .logo-small {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.navbar:empty {
+    display: none; /* Hide the navbar if it's empty */
+}
+
+.site-footer {
+    text-align: center;
+    padding: 5px;
+    background-color: #f8f8f8;
+    border-top: 1px solid #e7e7e7;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.site-footer-search {
+   bottom: -40px;
+}
+
+.site-footer a {
+    color: #333;
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    text-decoration: underline;
+}
+
+body {
+    /* ... existing styles ... */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+/* Add these styles to your existing CSS file */
+
+.suggested-searches {
+    margin-top: 30px;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+}
+
+.suggested-searches h3 {
+    font-family: 'Futura', sans-serif;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.suggested-searches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    justify-content: center;
+}
+
+.suggested-search-item {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    font-size: 0.9em;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.suggested-search-item:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+/* Update the existing styles for the search page */
+.search-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 60px; /* Increased padding to accommodate footer */
+}
+
+.page-wrap {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Update the footer styles */
+.site-footer-search {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #f8f8f8;
+    border-top: 1px solid #e7e7e7;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Adjust the suggested searches section */
+.suggested-searches {
+    margin-top: 30px;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    margin-bottom: 80px; /* Keep this to ensure space above footer */
+    padding-bottom: 20px;
+}
+
+/* Add a media query for smaller screens */
+@media screen and (max-height: 600px) {
+    .search-page {
+        padding-bottom: 80px; /* Increase padding for smaller screens */
+    }
+
+    .suggested-searches {
+        margin-bottom: 100px; /* Increase margin for smaller screens */
+    }
+}
+
+/* Google-inspired logo colors */
+.logo .blue { color: #4285F4; }
+.logo .red { color: #EA4335; }
+.logo .yellow { color: #FBBC05; }
+.logo .green { color: #34A853; }
+
+/* For the small logo in the navbar */
+.logo-small .blue { color: #4285F4; }
+.logo-small .red { color: #EA4335; }
+.logo-small .yellow { color: #FBBC05; }
+.logo-small .green { color: #34A853; }
+
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: rgba(66, 133, 244, 0.5); /* More transparent blue */
+    color: white;
+    width: 50px;  /* Increased from 40px */
+    height: 50px; /* Increased from 40px */
+    text-align: center;
+    line-height: 50px; /* Increased to match new height */
+    font-size: 30px; /* Increased from 24px */
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.3s;
+    z-index: 1000;
+    border-radius: 8px; /* Increased from 4px for softer corners */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Added subtle shadow */
+}
+
+.back-to-top:hover {
+    background-color: rgba(51, 103, 214, 0.7); /* Slightly more opaque on hover */
+    transform: scale(1.1); /* Slight grow effect on hover */
+}
+
+.back-to-top::after {
+    content: '↑';
+    display: inline-block;
+}
+
+/* Ensure the arrow doesn't overlap with the footer on smaller screens */
+@media (max-height: 700px) {
+    .back-to-top {
+        bottom: 90px; /* Increased from 80px */
+    }
+}
+
+/* Sticky Footer Styles */
+html, body {
+  height: 100%;
+}
+
+.search-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-wrap {
+  flex: 1 0 auto;
+  padding-bottom: 60px; /* Match this to the height of your footer */
+}
+
+.site-footer {
+  flex-shrink: 0;
+}
+
+/* Specific styles for the search page footer */
+.site-footer-search {
+  background-color: #f8f8f8;
+  border-top: 1px solid #e7e7e7;
+  text-align: center;
+  padding: 10px 0;
+  width: 100%;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.site-footer-search a {
+  color: #333;
+  text-decoration: none;
+}
+
+.site-footer-search a:hover {
+  text-decoration: underline;
+}
+
+/* Update existing styles */
+.search-container {
+  margin-top: 12vh;
+  margin-bottom: 20px;
+}
+
+/* Add margin and spacing to the bottom of suggested searches */
+.suggested-searches {
+  margin-top: 30px;
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+  margin-bottom: 80px; /* Increased to ensure no overlap with footer */
+  padding-bottom: 20px;
+}
+
+.transcript-entry {
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.transcript-entry.highlight {
+    background-color: #ffffd0;
+}

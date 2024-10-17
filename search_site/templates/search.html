@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Crisis Search</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="search-page">
+  <div class="search-container">
+    <div class="logo-container">
+      <h1 class="logo">
+        <span class="blue">T</span><span class="red">i</span><span class="yellow">m</span><span class="blue">e</span>
+        <span class="green">C</span><span class="red">r</span><span class="yellow">i</span><span class="blue">s</span><span class="green">i</span><span class="red">s</span>
+      </h1>
+    </div>
+    <div class="subtitle-container">
+      <span class="subtitle" style="font-family: 'Futura', sans-serif; display: block; text-align: center;">With Ezra Koenig</span>
+    </div>
+  </div>
+    <form method="get" action="{{ url_for('search') }}">
+      <div class="search-input-wrapper">
+        <input type="text" name="query" value="{{ query }}" placeholder="Search Time Crisis transcripts">
+        <button type="button" class="advanced-options-toggle" onclick="toggleAdvancedOptions()">⚙️</button>
+        <button type="submit" class="search-button">Search</button>
+      </div>
+      <div id="advancedOptions" class="advanced-options" style="display: none;">
+        <select name="field">
+          <option value="content" {% if field == 'content' %}selected{% endif %}>All Content</option>
+          <option value="episode_name" {% if field == 'episode_name' %}selected{% endif %}>Episode Name</option>
+        </select>
+        <select name="sort_by">
+          <option value="episode" {% if sort_by == 'episode' %}selected{% endif %}>Sort by Episode</option>
+          <option value="hits" {% if sort_by == 'hits' %}selected{% endif %}>Sort by Most Hits</option>
+        </select>
+        <label class="fuzzy-search-toggle">
+          <input type="checkbox" name="fuzzy_search" {% if fuzzy_search %}checked{% endif %}>
+          Fuzzy Search
+        </label>
+      </div>
+    </form>
+  </div>
+
+  <div class="suggested-searches">
+    <h3>Suggested Searches</h3>
+    <div class="suggested-searches-grid">
+      <a href="{{ url_for('search', query='Borgesian') }}" class="suggested-search-item">Borgesian</a>
+      <a href="{{ url_for('search', query='Tasteful palette') }}" class="suggested-search-item">Tasteful palette</a>
+      <a href="{{ url_for('search', query='Jim Morrison') }}" class="suggested-search-item">Jim Morrison</a>
+      <a href="{{ url_for('search', query='Horse meat') }}" class="suggested-search-item">Horse meat</a>
+      <a href="{{ url_for('search', query='Larry David') }}" class="suggested-search-item">Larry David</a>
+      <a href="{{ url_for('search', query='Eileens Car') }}" class="suggested-search-item">Eileen's Car</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var episodeHeaders = document.querySelectorAll('.episode-header');
+      episodeHeaders.forEach(function(header) {
+        header.addEventListener('click', function(event) {
+          if (event.target.classList.contains('toggle-button')) {
+            return;
+          }
+
+          var content = this.nextElementSibling;
+          if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+            this.classList.add('active');
+            this.querySelector('.toggle-button').textContent = '-';
+          } else {
+            content.style.display = 'none';
+            this.classList.remove('active');
+            this.querySelector('.toggle-button').textContent = '+';
+          }
+        });
+
+        var toggleButton = header.querySelector('.toggle-button');
+        toggleButton.addEventListener('click', function(event) {
+          event.stopPropagation();
+          var content = this.closest('.episode-header').nextElementSibling;
+          if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+            this.textContent = '-';
+            this.closest('.episode-header').classList.add('active');
+          } else {
+            content.style.display = 'none';
+            this.textContent = '+';
+            this.closest('.episode-header').classList.remove('active');
+          }
+        });
+      });
+    });
+
+    function toggleDropdown() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function toggleJokerman() {
+        document.body.classList.toggle("jokerman");
+    }
+
+    function toggleAdvancedOptions() {
+        var advancedOptions = document.getElementById("advancedOptions");
+        advancedOptions.style.display = advancedOptions.style.display === "none" ? "block" : "none";
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.menu-icon')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    };
+  </script>
+
+  <footer class="site-footer site-footer-search">
+    <p>&copy; 2024 TC Technologies | Created by <a href="https://mitchellcarter.dev" target="_blank">Mitchell Carter</a> | See the code <a href="https://github.com/WeezerGeezer/tc-search" target="_blank">here</a>!</p>
+  </footer>
+</body>
+</html>

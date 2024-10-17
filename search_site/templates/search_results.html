@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Crisis Search Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="results-page">
+    <div class="search-bar">
+        <div class="logo-container">
+            <a href="{{ url_for('search') }}" class="logo-small">
+                <span class="blue">T</span><span class="red">i</span><span class="yellow">m</span><span class="blue">e</span>
+                <span class="green">C</span><span class="red">r</span><span class="yellow">i</span><span class="blue">s</span><span class="green">i</span><span class="red">s</span>
+            </a>
+        </div>
+        <form method="get" action="{{ url_for('search') }}">
+            <div class="search-input-wrapper">
+                <input type="text" name="query" value="{{ query }}" placeholder="Search Time Crisis transcripts">
+                <button type="button" class="advanced-options-toggle" onclick="toggleAdvancedOptions()">⚙️</button>
+                <button type="submit" class="search-button">Search</button>
+            </div>
+            <div id="advancedOptions" class="advanced-options" style="display: none;">
+                <select name="field">
+                    <option value="content" {% if field == 'content' %}selected{% endif %}>All Content</option>
+                    <option value="episode_name" {% if field == 'episode_name' %}selected{% endif %}>Episode Name</option>
+                </select>
+                <select name="sort_by">
+                    <option value="episode" {% if sort_by == 'episode' %}selected{% endif %}>Sort by Episode</option>
+                    <option value="hits" {% if sort_by == 'hits' %}selected{% endif %}>Sort by Most Hits</option>
+                </select>
+                <label class="fuzzy-search-toggle">
+                    <input type="checkbox" name="fuzzy_search" {% if fuzzy_search %}checked{% endif %}>
+                    Fuzzy Search
+                </label>
+            </div>
+        </form>
+    </div>
+
+    <div id="searchOptions" class="search-options" style="display: none;">
+        <h3>Additional Search Options</h3>
+        <select name="field">
+            <option value="content" {% if field == 'content' %}selected{% endif %}>All Content</option>
+            <option value="episode_name" {% if field == 'episode_name' %}selected{% endif %}>Episode Name</option>
+        </select>
+        <select name="sort_by">
+            <option value="episode" {% if sort_by == 'episode' %}selected{% endif %}>Sort by Episode</option>
+            <option value="hits" {% if sort_by == 'hits' %}selected{% endif %}>Sort by Most Hits</option>
+        </select>
+        <label class="fuzzy-search-toggle">
+            <input type="checkbox" name="fuzzy_search" {% if fuzzy_search %}checked{% endif %}>
+            Fuzzy Search
+        </label>
+    </div>
+
+    <main class="search-results">
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% elif results %}
+            {% for episode in results %}
+            <div class="result-item">
+                <h3>
+                    <a href="{{ episode.episode_url }}">Episode {{ episode.episode }}: {{ episode.episode_name }}</a>
+                </h3>
+                <p class="result-url">{{ episode.episode_url }}</p>
+                {% for hit in episode.hits %}
+                <div class="hit-item">
+                    <p class="result-snippet">
+                        <a href="{{ episode.episode_url }}#t={{ hit.start_time | replace(':', '') }}" class="timestamp-link">{{ hit.start_time }}</a>
+                        {{ hit.content | safe }}
+                    </p>
+                </div>
+                {% endfor %}
+                <p class="result-meta">Hits: {{ episode.hit_count }}</p>
+            </div>
+            {% endfor %}
+
+            <div class="pagination">
+                {% if page > 1 %}
+                    <a href="{{ url_for('search', query=query, page=page-1, field=field, sort_by=sort_by) }}">Previous</a>
+                {% endif %}
+                <span>Page {{ page }} of {{ total_pages }}</span>
+                {% if page < total_pages %}
+                    <a href="{{ url_for('search', query=query, page=page+1, field=field, sort_by=sort_by) }}">Next</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p>No results found.</p>
+        {% endif %}
+    </main>
+
+    <script>
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        function toggleJokerman() {
+            document.body.classList.toggle("jokerman");
+        }
+
+        function toggleAdvancedOptions() {
+            var advancedOptions = document.getElementById("advancedOptions");
+            advancedOptions.style.display = advancedOptions.style.display === "none" ? "block" : "none";
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.menu-icon')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        };
+
+        function handleBackToTop() {
+            var backToTop = document.getElementById("back-to-top");
+            window.onscroll = function() {
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    backToTop.style.display = "block";
+                } else {
+                    backToTop.style.display = "none";
+                }
+            };
+
+            backToTop.onclick = function(e) {
+                e.preventDefault();
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            handleBackToTop();
+        });
+    </script>
+
+<footer class="site-footer">
+    <p>&copy; 2024 TC Technologies | Created by <a href="https://mitchellcarter.dev" target="_blank">Mitchell Carter</a> | See the code <a href="https://github.com/WeezerGeezer/tc-search" target="_blank">here</a>!</p>
+</footer>
+
+<!-- Add this just before the closing </body> tag -->
+<a id="back-to-top" href="#" class="back-to-top" style="display: none;"></a>
+    <i class="arrow up"></i>
+</a>
+</body>
+</html>

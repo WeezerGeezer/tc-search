@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Episode {{ episode_id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .transcript-entry { margin-bottom: 10px; padding: 5px; } /* Reduced vertical space */
+        .timestamp { font-weight: bold; }
+        .transcript-entry:first-child { display: none; } /* Hide the first transcript entry */
+        .highlight { background-color: #ffff99; } /* Highlight color */
+    </style>
+</head>
+<body>
+    <div class="search-bar">
+        <div class="logo-container">
+            <a href="{{ url_for('search') }}" class="logo-small">
+                <span class="blue">T</span><span class="red">i</span><span class="yellow">m</span><span class="blue">e</span>
+                <span class="green">C</span><span class="red">r</span><span class="yellow">i</span><span class="blue">s</span><span class="green">i</span><span class="red">s</span>
+            </a>
+        </div>
+        <form method="get" action="{{ url_for('search') }}">
+            <div class="search-input-wrapper">
+                <input type="text" name="query" value="{{ query }}" placeholder="Search Time Crisis transcripts">
+                <button type="button" class="advanced-options-toggle" onclick="toggleAdvancedOptions()">⚙️</button>
+                <button type="submit" class="search-button">Search</button>
+            </div>
+            <div id="advancedOptions" class="advanced-options" style="display: none;">
+                <select name="field">
+                    <option value="content" {% if field == 'content' %}selected{% endif %}>All Content</option>
+                    <option value="episode_name" {% if field == 'episode_name' %}selected{% endif %}>Episode Name</option>
+                </select>
+                <select name="sort_by">
+                    <option value="episode" {% if sort_by == 'episode' %}selected{% endif %}>Sort by Episode</option>
+                    <option value="hits" {% if sort_by == 'hits' %}selected{% endif %}>Sort by Most Hits</option>
+                </select>
+                <label class="fuzzy-search-toggle">
+                    <input type="checkbox" name="fuzzy_search" {% if fuzzy_search %}checked{% endif %}>
+                    Fuzzy Search
+                </label>
+            </div>
+        </form>
+    </div>
+
+    <main>
+        <h1 style="font-family: 'Futura', sans-serif;">Episode {{ episode_id }}: {{ episode_name }}</h1>
+
+        <h2 style="font-family: 'Jokerman', cursive;">Links</h2>
+        <ul>
+            <li><a href="{{ tcu_wiki_link }}" target="_blank">TCU Wiki</a></li>
+            <li>
+                {% if episode_download_link != "#" %}
+                    <a href="{{ episode_download_link }}" target="_blank">{{ episode_download_text }}</a>
+                {% else %}
+                    <span>{{ episode_download_text }}</span>
+                {% endif %}
+            </li>
+            <li><a href="{{ csv_download_link }}">Download CSV</a></li>
+            <li><a href="{{ transcript_download_link }}">Download Full Transcript</a></li>
+        </ul>
+
+        <h2>Transcript</h2>
+        {% for entry in transcript %}
+        <div class="transcript-entry" id="t{{ entry.start_time | replace(':', '') }}">
+            <span class="timestamp">{{ entry.start_time }} - {{ entry.end_time }}:</span>
+            <span class="content">{{ entry.transcript }}</span>
+        </div>
+    {% endfor %}
+
+        <p>
+            <a href="{{ tcu_wiki_link }}" target="_blank">View on TCU Wiki</a> |
+            <a href="{{ episode_download_link }}" target="_blank">Download Episode</a> |
+            <a href="{{ csv_download_link }}">Download CSV</a> |
+            <a href="{{ transcript_download_link }}">Download Transcript</a>
+        </p>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2024 TC Technologies | Created by <a href="https://mitchellcarter.dev" target="_blank">Mitchell Carter</a> | See the code <a href="https://github.com/WeezerGeezer/tc-search" target="_blank">here</a>!</p>
+    </footer>
+
+    <!-- Add this just before the closing </body> tag -->
+    <a id="back-to-top" href="#" class="back-to-top" style="display: none;">
+        <i class="arrow up"></i>
+    </a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded");
+
+            function scrollToAndHighlight(elementId) {
+                console.log("Attempting to scroll to:", elementId);
+                const element = document.getElementById(elementId);
+                if (element) {
+                    console.log("Element found, positioning");
+                    // Scroll to the element without animation
+                    element.scrollIntoView(true);
+                    
+                    // Center the element in the viewport
+                    const elementRect = element.getBoundingClientRect();
+                    const absoluteElementTop = elementRect.top + window.pageYOffset;
+                    const middle = absoluteElementTop - (window.innerHeight / 2);
+                    window.scrollTo(0, middle);
+
+                    // Highlight the element
+                    element.classList.add('highlight');
+                    
+                    // Remove highlight after 5 seconds
+                    setTimeout(() => {
+                        element.classList.remove('highlight');
+                    }, 5000);
+                } else {
+                    console.log("Element not found:", elementId);
+                }
+            }
+
+            // Handle both hash and search parameter
+            const hash = window.location.hash;
+            const urlParams = new URLSearchParams(window.location.search);
+            const timestamp = urlParams.get('t') || (hash ? hash.substring(2) : null);
+
+            if (timestamp) {
+                console.log("Timestamp detected:", timestamp);
+                const elementId = 't' + timestamp.replace(/[:=]/g, '');
+                scrollToAndHighlight(elementId);
+            }
+
+            // Remove highlight when clicking anywhere else on the page
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.transcript-entry')) {
+                    document.querySelectorAll('.transcript-entry.highlight').forEach(function(el) {
+                        el.classList.remove('highlight');
+                    });
+                }
+            });
+        });
+
+        function toggleAdvancedOptions() {
+            var advancedOptions = document.getElementById("advancedOptions");
+            advancedOptions.style.display = advancedOptions.style.display === "none" ? "block" : "none";
+        }
+
+        function handleBackToTop() {
+            var backToTop = document.getElementById("back-to-top");
+            window.onscroll = function() {
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    backToTop.style.display = "block";
+                } else {
+                    backToTop.style.display = "none";
+                }
+            };
+
+            backToTop.onclick = function(e) {
+                e.preventDefault();
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            handleBackToTop();
+        });
+    </script>
+</body>
+</html>

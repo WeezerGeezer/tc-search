@@ -1,0 +1,32 @@
+<nav class="navbar">
+    {% if request.endpoint != 'search' %}
+    <div class="navbar-content">
+        <a href="{{ url_for('search') }}" class="logo-small">TCU Search</a>
+        <form action="{{ url_for('search') }}" method="get" class="search-form">
+            <div class="search-input-wrapper">
+                <input type="text" name="q" placeholder="Search..." value="{{ request.args.get('q', '') }}">
+                <button type="submit" class="search-button">Search</button>
+            </div>
+        </form>
+        <div class="menu-icon" onclick="toggleDropdown()">☰</div>
+        <div class="dropdown-content" id="myDropdown">
+            <a href="#" onclick="toggleJokerman()">Toggle Jokerman Font</a>
+            <a href="#" onclick="toggleAdvancedOptions()">Advanced Options</a>
+        </div>
+    </div>
+    <div id="advancedOptions" class="advanced-options" style="display: none;">
+        <select name="field">
+            <option value="content" {% if field == 'content' %}selected{% endif %}>All Content</option>
+            <option value="episode_name" {% if field == 'episode_name' %}selected{% endif %}>Episode Name</option>
+        </select>
+        <select name="sort_by">
+            <option value="episode" {% if sort_by == 'episode' %}selected{% endif %}>Sort by Episode</option>
+            <option value="hits" {% if sort_by == 'hits' %}selected{% endif %}>Sort by Most Hits</option>
+        </select>
+        <label class="fuzzy-search-toggle">
+            <input type="checkbox" name="fuzzy_search" {% if fuzzy_search %}checked{% endif %}>
+            Fuzzy Search
+        </label>
+    </div>
+    {% endif %}
+</nav>
